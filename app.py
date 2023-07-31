@@ -3,6 +3,7 @@ import pandas as pd
 from whoosh.index import open_dir
 import os
 from whoosh.qparser import QueryParser
+from whoosh import sorting
 from string import punctuation
 from datetime import datetime
 import gdown 
@@ -23,7 +24,7 @@ def get_indices():
     os.makedirs('indices', exist_ok=True)
     os.chdir('indices')
     # nat archive
-    nat_archive_url = 'https://drive.google.com/drive/folders/1YMJmL8VfWIq5Xjy21XVcaRmgt1iyFkwi?usp=sharing'
+    nat_archive_url = 'https://drive.google.com/drive/folders/1Ew0mU1l7Y3M1CgD0RBZbfbp-tCwBFVga?usp=sharing'
     gdown.download_folder(nat_archive_url, quiet=True, use_cookies=False)
     # ws
     statements_url = 'https://drive.google.com/drive/folders/1Gsi1UUGxDrIn5j-kzFaE7yI41jPzwnVS?usp=sharing'
@@ -38,12 +39,18 @@ query_str = st.text_input('Search for a word or phrase')
 with st.expander('Click for further information on how to construct a query.'):
     st.markdown("""
     * If you would like to search for just a single term, 
-    * 
+    * TBD
     """)
 
 dirs = os.listdir('./indices')
 choice = st.selectbox('What documents would you like to search in?', dirs, format_func=lambda x: x.replace('_index', '').replace('_', ' ').title()+' documents')
 ix = open_dir(f'./indices/{choice}')
+
+if choice == 'national_archive_index':
+    cats = sorting.FieldFacet("category")
+    cat_choice = st.selectbox('What category of the National Archive data would you like to search in?', ['HIV', 'Haemophilia', 'Hep_C', 'Litigation and Compensation'], format_func=lambda x: x.replace('_', ' '))
+else:
+    cats = None
 
 to_see = st.number_input('How many results would you like to see per page?', value=10)
 
@@ -85,10 +92,19 @@ if query_str != '':
     searches = [q.lower() for q in query_str.split(' ') if (q != 'AND') and (q != 'OR') and (q != 'NOT')]
 
     with ix.searcher() as searcher:
-        results = searcher.search_page(query, st.session_state['page_count'], st.session_state['to_see']//2) # sortedby=None works! to add later
-        for r in results:
-            st.markdown(f"<small><b>Filename: {r['title']}</b></small>", unsafe_allow_html=True)
-            st.markdown(f"<small><b>Date: {datetime.strftime(r['date'], '%B %-d, %Y')}</b></small>", unsafe_allow_html=True)
-            st.markdown(inject_highlights(escape_markdown(r['text'].replace('\n --', ' --')),searches), unsafe_allow_html=True) 
-            st.markdown("<hr style='width: 75%;margin: auto;'>", unsafe_allow_html=True)
+        results = searcher.search_page(query, st.session_state['page_count'], st.session_state['to_see']//2, groupedby=cats) # sortedby=None works! to add later
+        if choice == 'national_archive_index':
+            hits = results.results.groups()[cat_choice]
+            for res in hits[st.session_state.start:st.session_state.start+st.session_state.to_see]:
+                r = searcher.stored_fields(res)
+                st.markdown(f"<small><b>Filename: {r['title']}</b></small>", unsafe_allow_html=True)
+                st.markdown(f"<small><b>Date: {datetime.strftime(r['date'], '%B %-d, %Y')}</b></small>", unsafe_allow_html=True)
+                st.markdown(inject_highlights(escape_markdown(r['text'].replace('\n --', ' --')),searches), unsafe_allow_html=True) 
+                st.markdown("<hr style='width: 75%;margin: auto;'>", unsafe_allow_html=True)
+        else:
+            for r in results:
+                st.markdown(f"<small><b>Filename: {r['title']}</b></small>", unsafe_allow_html=True)
+                st.markdown(f"<small><b>Date: {datetime.strftime(r['date'], '%B %-d, %Y')}</b></small>", unsafe_allow_html=True)
+                st.markdown(inject_highlights(escape_markdown(r['text'].replace('\n --', ' --')),searches), unsafe_allow_html=True) 
+                st.markdown("<hr style='width: 75%;margin: auto;'>", unsafe_allow_html=True)
         st.write(f'Page: {st.session_state.page_count} of {len(results)//to_see}')
