@@ -163,4 +163,6 @@ cython_debug/
 *.csv
 
 # indices
-/indices
+national_archive_index
+transcript_index
+written_statement_index

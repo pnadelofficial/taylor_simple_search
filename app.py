@@ -20,6 +20,7 @@ if 'start' not in st.session_state:
 
 @st.cache_data
 def get_indices():
+    os.makedirs('indices', exist_ok=True)
     os.chdir('indices')
     # nat archive
     nat_archive_url = 'https://drive.google.com/drive/folders/1YMJmL8VfWIq5Xjy21XVcaRmgt1iyFkwi?usp=sharing'
@@ -36,7 +37,7 @@ get_indices()
 query_str = st.text_input('Search for a word or phrase')
 with st.expander('Click for further information on how to construct a query.'):
     st.markdown("""
-    * If you would like to search for just a single term
+    * If you would like to search for just a single term, 
     * 
     """)
 
