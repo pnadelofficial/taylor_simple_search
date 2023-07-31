@@ -1,0 +1,4 @@
+gdown==4.7.1
+pandas==2.0.3
+streamlit==1.25.0
+Whoosh==2.7.4
