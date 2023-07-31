@@ -36,7 +36,7 @@ get_indices()
 query_str = st.text_input('Search for a word or phrase')
 with st.expander('Click for further information on how to construct a query.'):
     st.markdown("""
-    * 
+    * If you would like to search for just a single term
     * 
     """)
 
