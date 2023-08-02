@@ -36,10 +36,17 @@ def get_indices():
 get_indices()
 
 query_str = st.text_input('Search for a word or phrase')
-with st.expander('NOT FINISHED Click for further information on how to construct a query.'):
+with st.expander('Click for further information on how to construct a query.'):
     st.markdown("""
-    * If you would like to search for just a single term, 
-    * TBD
+    * If you'd like to search for just a single term, you can enter it in the box above. 
+    * If you'd like to search for a phrase, you can enclose it in quotations, such as "Macfarlane Trust". (TODO: highlighting is buggy with quotations, output is still correct)
+    * A query like "Macfarlane Trust"~5 would return results where "Marcfarlane" and "Trust" are at most 5 words away from each other.
+    * AND can be used as a boolean operator and will return results where two terms are both in a passage. AND is automatically placed in a query of two words, so Macfarlane Trust is internally represented as Macfarlane AND Trust.
+    * OR can be used as a boolean operator and will return results where either one of two terms are in a passage.
+    * NOT can be used as a boolean operator and will return results which do not include the term following the NOT.
+    * From these boolean operators, one can construct complex queries like: HIV AND Haemophilia NOT "Hepatitis C". This query would return results that have both HIV and Haemophilia in them, but do not have Hepatitis C.
+    * Parentheses can be used to group boolean statements. For example, the query Haemophilia AND ("Hepatitis C" OR  HIV) would return results that have Haemophilia and either Hepatitis C or HIV in them. (TODO: highlighting is buggy with parentheses, output is still correct)
+    * If you'd like to search in a specific date range, you can specify it with the date: field. For example, date:[20210101:20220101] HIV would return results between January 1st, 2021 and January 1st, 2022 that have HIV in them.
     """)
 
 dirs = os.listdir('./indices')
