@@ -46,7 +46,7 @@ with st.expander('Click for further information on how to construct a query.'):
     * NOT can be used as a boolean operator and will return results which do not include the term following the NOT.
     * From these boolean operators, one can construct complex queries like: HIV AND Haemophilia NOT "Hepatitis C". This query would return results that have both HIV and Haemophilia in them, but do not have Hepatitis C.
     * Parentheses can be used to group boolean statements. For example, the query Haemophilia AND ("Hepatitis C" OR  HIV) would return results that have Haemophilia and either Hepatitis C or HIV in them. (TODO: highlighting is buggy with parentheses, output is still correct)
-    * If you'd like to search in a specific date range, you can specify it with the date: field. For example, date:[20210101:20220101] HIV would return results between January 1st, 2021 and January 1st, 2022 that have HIV in them.
+    * If you'd like to search in a specific date range, you can specify it with the date: field. For example, date:[20210101 TO 20220101] HIV would return results between January 1st, 2021 and January 1st, 2022 that have HIV in them.
     """)
 
 dirs = os.listdir('./indices')
