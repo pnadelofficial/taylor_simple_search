@@ -2,6 +2,10 @@ import streamlit as st
 import os
 import gdown
 from string import punctuation
+import re
+from datetime import datetime
+
+punctuation = ''.join([p for p in punctuation if p != '"'])
 
 @st.cache_data
 def get_indices():
@@ -42,12 +46,33 @@ def no_punct(word):
     '''Util for below to remove punctuation'''
     return ''.join([letter for letter in word if letter not in punctuation.replace('-', '')])
 
+def remove_tilde(word):
+    return re.sub('~\d+', '', word)
+
 def inject_highlights(text, searches):
     '''Highlights words from the search query''' 
-    esc = punctuation + '"' + '."' + '..."'
+    searches = [remove_tilde(s).replace('"', '') for s in searches if s != '']
+    esc = punctuation + '."' + '..."'
     inject = f"""
         <p>
         {' '.join([f"<span style='background-color:#fdd835'>{word}</span>" if (no_punct(word.lower()) in searches) and (word not in esc) else word for word in text.split()])}
         </p>
         """ 
     return inject 
+
+def add_context(data, r, amount=1):
+    sents = []
+    res_idx = int(data.loc[(data.passage==r['text'])].index[0])
+    sents += list(data.iloc[res_idx-amount:res_idx].passage)
+    sents += list(data.iloc[res_idx:res_idx+(amount+1)].passage)
+    return '\n'.join(sents)
+
+def display_results(i, r, data, searches):
+    st.markdown(f"<small><b>Filename: {r['title']}</b></small>", unsafe_allow_html=True)
+    st.markdown(f"<small><b>Date: {datetime.strftime(r['date'], '%B %-d, %Y')}</b></small>", unsafe_allow_html=True)
+    full = r['text']
+    amount = st.number_input('Choose context length', key=f'num_{i}', value=1, step=1, help='This number represents the amount of sentences to be added before and after the result.')
+    if st.button('Add context', key=f'con_{i}'):
+        full = add_context(data, r, amount)
+    st.markdown(inject_highlights(escape_markdown(full.replace('\n --', ' --')), searches), unsafe_allow_html=True) 
+    st.markdown("<hr style='width: 75%;margin: auto;'>", unsafe_allow_html=True)
