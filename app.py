@@ -81,6 +81,7 @@ if query_str != '':
             else:
                 st.write(f"No results for this query in the {cat_choice} documents.")  
         else:
+            print(len(results))
             for i, r in enumerate(results[st.session_state.start:st.session_state.start+st.session_state.to_see]):
                 utils.display_results(i, r, data, searches)
             st.write(f'Page: {st.session_state.page_count} of {len(results)//to_see}')
