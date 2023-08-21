@@ -73,7 +73,6 @@ def display_results(i, r, data, searches, display_date=True):
     if st.button('Add context', key=f'con_{i}'):
         full = add_context(data, r, amount)
     if ('QUESTION:' in full) and ('ANSWER:' in full):
-        print('met')
         print(re.sub('(?=ANSWER:)', '<br>', full, flags=re.DOTALL))
         full = re.sub('(?=ANSWER:)', '<br>', full, flags=re.DOTALL)
         full = re.sub('(?=.QUESTION:)', '<br>', full, flags=re.DOTALL)
