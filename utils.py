@@ -77,3 +77,4 @@ def display_results(i, r, data, searches, display_date=True):
         full = re.sub('(?=.QUESTION:)', '<br>', full, flags=re.DOTALL)
     st.markdown(inject_highlights(escape_markdown(full.replace('\n --', ' --')), searches), unsafe_allow_html=True) 
     st.markdown("<hr style='width: 75%;margin: auto;'>", unsafe_allow_html=True)
+    
