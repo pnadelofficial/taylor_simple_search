@@ -82,4 +82,4 @@ if query_str != '':
         else:
             for i, r in enumerate(results[st.session_state.start:st.session_state.start+st.session_state.to_see]):
                 utils.display_results(i, r, data, searches)
-            st.write(f'Page: {st.session_state.page_count} of {len(results)//to_see}')
+            st.write(f'Page: {st.session_state.page_count} of {(len(results)//to_see)+1}')
