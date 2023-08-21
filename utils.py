@@ -65,9 +65,9 @@ def add_context(data, r, amount=1):
     sents += list(data.iloc[res_idx:res_idx+(amount+1)].passage)
     return '\n'.join(sents)
 
-def display_results(i, r, data, searches):
+def display_results(i, r, data, searches, display_date=True):
     st.markdown(f"<small><b>Filename: {r['title']}</b></small>", unsafe_allow_html=True)
-    st.markdown(f"<small><b>Date: {datetime.strftime(r['date'], '%B %-d, %Y')}</b></small>", unsafe_allow_html=True)
+    if display_date: st.markdown(f"<small><b>Date: {datetime.strftime(r['date'], '%B %-d, %Y')}</b></small>", unsafe_allow_html=True)
     full = r['text']
     amount = st.number_input('Choose context length', key=f'num_{i}', value=1, step=1, help='This number represents the amount of sentences to be added before and after the result.')
     if st.button('Add context', key=f'con_{i}'):

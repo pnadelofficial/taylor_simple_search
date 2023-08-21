@@ -75,7 +75,7 @@ if query_str != '':
                 hits = list(set(groups[cat_choice]))
                 for i, res in enumerate(hits[st.session_state.start:st.session_state.start+st.session_state.to_see]):
                     r = searcher.stored_fields(res)
-                    utils.display_results(i, r, data, searches)
+                    utils.display_results(i, r, data, searches, display_date=False)
                 st.write(f'Page: {st.session_state.page_count} of {(len(hits)//to_see)+1}')
             else:
                 st.write(f"No results for this query in the {cat_choice} documents.")  
