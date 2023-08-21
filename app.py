@@ -68,12 +68,11 @@ if query_str != '':
     searches = [q.lower() for q in query_str.split(' ') if (q != 'AND') and (q != 'OR') and (q != 'NOT') and (q != 'TO')]
 
     with ix.searcher() as searcher:
-        results = searcher.search(query, groupedby=cats)
+        results = searcher.search(query, groupedby=cats, limit=None)
         if choice == 'national_archive_index':
             groups = results.groups()
             if cat_choice in groups:
                 hits = list(set(groups[cat_choice]))
-                print(st.session_state.start, st.session_state.start+st.session_state.to_see)
                 for i, res in enumerate(hits[st.session_state.start:st.session_state.start+st.session_state.to_see]):
                     r = searcher.stored_fields(res)
                     utils.display_results(i, r, data, searches)
@@ -81,7 +80,6 @@ if query_str != '':
             else:
                 st.write(f"No results for this query in the {cat_choice} documents.")  
         else:
-            print(len(results))
             for i, r in enumerate(results[st.session_state.start:st.session_state.start+st.session_state.to_see]):
                 utils.display_results(i, r, data, searches)
             st.write(f'Page: {st.session_state.page_count} of {len(results)//to_see}')

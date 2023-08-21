@@ -5,8 +5,6 @@ from string import punctuation
 import re
 from datetime import datetime
 
-punctuation = ''.join([p for p in punctuation if p != '"'])
-
 @st.cache_data
 def get_indices():
     os.makedirs('indices', exist_ok=True)
