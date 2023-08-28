@@ -65,7 +65,7 @@ def add_context(data, r, amount=1):
     sents += list(data.iloc[res_idx:res_idx+(amount+1)].passage)
     return '\n'.join(sents)
 
-def display_results(i, r, data, searches, display_date=True):
+def display_results(i, r, data, searches, display_date=True, text_return=True):
     st.markdown(f"<small><b>Filename: {r['title']}</b></small>", unsafe_allow_html=True)
     if display_date: st.markdown(f"<small><b>Date: {datetime.strftime(r['date'], '%B %-d, %Y')}</b></small>", unsafe_allow_html=True)
     full = r['text']
@@ -77,4 +77,5 @@ def display_results(i, r, data, searches, display_date=True):
         full = re.sub('(?=.QUESTION:)', '<br>', full, flags=re.DOTALL)
     st.markdown(inject_highlights(escape_markdown(full.replace('\n --', ' --')), searches), unsafe_allow_html=True) 
     st.markdown("<hr style='width: 75%;margin: auto;'>", unsafe_allow_html=True)
-    
+    if text_return:
+        return full, r 

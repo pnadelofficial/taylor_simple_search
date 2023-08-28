@@ -5,6 +5,9 @@ import os
 from whoosh.qparser import QueryParser
 from whoosh import sorting
 import utils
+from fpdf import FPDF
+import base64
+from datetime import datetime
 
 st.title('Simple Search')
 
@@ -62,6 +65,7 @@ with st.sidebar:
         st.session_state.start = st.session_state.start - to_see
         st.session_state.page_count -= 1
 
+text_for_save = []
 if query_str != '':
     parser = QueryParser("text", ix.schema)
     query = parser.parse(query_str)
@@ -75,11 +79,67 @@ if query_str != '':
                 hits = list(set(groups[cat_choice]))
                 for i, res in enumerate(hits[st.session_state.start:st.session_state.start+st.session_state.to_see]):
                     r = searcher.stored_fields(res)
-                    utils.display_results(i, r, data, searches, display_date=False)
+                    full = utils.display_results(i, r, data, searches, display_date=False)
+                    text_for_save.append(full)
                 st.write(f'Page: {st.session_state.page_count} of {(len(hits)//to_see)+1}')
             else:
                 st.write(f"No results for this query in the {cat_choice} documents.")  
         else:
             for i, r in enumerate(results[st.session_state.start:st.session_state.start+st.session_state.to_see]):
-                utils.display_results(i, r, data, searches)
+                full = utils.display_results(i, r, data, searches)
+                text_for_save.append(full)
             st.write(f'Page: {st.session_state.page_count} of {(len(results)//to_see)+1}')
+
+export_as_pdf_page = st.button("Export page as PDF")
+export_as_pdf_full = st.button("Export full search as PDF")
+
+def create_download_link(val, filename):
+    b64 = base64.b64encode(val)  # val looks like b'...'
+    return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Download file</a>'
+
+if export_as_pdf_page:
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.add_font('DejaVu', '', './fonts/DejaVuSansCondensed.ttf', uni=True)
+    pdf.add_font('DejaVu', 'B', './fonts/DejaVuSansCondensed-Bold.ttf', uni=True)
+    pdf.set_font('DejaVu', 'B', 16)
+    col_width = pdf.w / 1.11
+    spacing = 1.5
+    row_height = pdf.font_size
+    pdf.multi_cell(0, row_height*3, f"Search Query: {query_str}", 1)
+    pdf.ln(row_height*3)
+    for text, r in text_for_save:
+        pdf.set_font('DejaVu', 'B', 12)
+        pdf.multi_cell(col_width, row_height*spacing, f"Title: {r['title']}", 0, ln=2)
+        if choice != 'national_archive_index': pdf.multi_cell(col_width, row_height*spacing, f"Date: {datetime.strftime(r['date'], '%B %-d, %Y')}", 0, ln=2)
+        pdf.set_font('DejaVu', '', 14)
+        pdf.multi_cell(col_width, row_height*spacing, text, 'B', ln=2)
+        pdf.ln(row_height * spacing)
+
+    html = create_download_link(pdf.output(dest="S"), "test")
+    st.markdown(html, unsafe_allow_html=True)
+
+if export_as_pdf_full:
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.add_font('DejaVu', '', './fonts/DejaVuSansCondensed.ttf', uni=True)
+    pdf.add_font('DejaVu', 'B', './fonts/DejaVuSansCondensed-Bold.ttf', uni=True)
+    pdf.set_font('DejaVu', 'B', 16)
+    col_width = pdf.w / 1.11
+    spacing = 1.5
+    row_height = pdf.font_size
+    pdf.multi_cell(0, row_height*3, f"Search Query: {query_str}", 1)
+    pdf.ln(row_height*3)
+    with ix.searcher() as searcher:
+        results = searcher.search(query, groupedby=cats, limit=None)
+        for r in results:
+            text = r['text'].replace("€", '$pound_sign$').replace("—", "-")
+            pdf.set_font('DejaVu', 'B', 12)
+            pdf.multi_cell(col_width, row_height*spacing, f"Title: {r['title']}", 0, ln=2)
+            if choice != 'national_archive_index': pdf.multi_cell(col_width, row_height*spacing, f"Date: {datetime.strftime(r['date'], '%B %-d, %Y')}", 0, ln=2)
+            pdf.set_font('DejaVu', '', 14)
+            pdf.multi_cell(col_width, row_height*spacing, text, 'B', ln=2)
+            pdf.ln(row_height * spacing)
+
+    html = create_download_link(pdf.output(dest="S"), "test")
+    st.markdown(html, unsafe_allow_html=True)
