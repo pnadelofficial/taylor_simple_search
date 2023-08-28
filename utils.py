@@ -18,6 +18,9 @@ def get_indices():
     # transcripts
     transcripts_url = 'https://drive.google.com/drive/folders/1YR9KRs_ImSSQ4kT1QQR-zOAfmXyANrMl?usp=sharing'
     gdown.download_folder(transcripts_url, quiet=True, use_cookies=False)
+    # transcripts (just answers)
+    transcripts_answers_url = 'https://drive.google.com/drive/folders/1hOfshfxwtNct4l2drUw3RZKYLLOFQgUY?usp=sharing'
+    gdown.download_folder(transcripts_answers_url, quiet=True, use_cookies=False)
     os.chdir('..')
 
     os.makedirs('data', exist_ok=True)

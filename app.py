@@ -36,7 +36,7 @@ with st.expander('Click for further information on how to construct a query.'):
     * If you'd like to search in a specific date range, you can specify it with the date: field. For example, date:[20210101 TO 20220101] HIV would return results between January 1st, 2021 and January 1st, 2022 that have HIV in them.
     """)
 
-dirs = os.listdir('./indices')
+dirs = [d for d in os.listdir('./indices') if d != 'transcript_answers_index']
 choice = st.selectbox('What documents would you like to search in?', dirs, format_func=lambda x: x.replace('_index', '').replace('_', ' ').title()+' documents')
 ix = open_dir(f'./indices/{choice}')
 
@@ -52,6 +52,8 @@ elif choice == 'transcript_index':
     cats = None
     cat_choice = None
     data = pd.read_csv('./data/all_transcripts.csv').rename(columns={'index':'doc_index', 'q_a':'passage'})
+    on = st.toggle("Search on just the answers")
+    if on: ix = open_dir('./indices/transcript_answers_index')
 
 to_see = st.number_input('How many results would you like to see per page?', value=10)
 
