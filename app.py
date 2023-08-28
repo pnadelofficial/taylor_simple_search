@@ -113,7 +113,7 @@ if export_as_pdf_page:
         pdf.multi_cell(col_width, row_height*spacing, f"Title: {r['title']}", 0, ln=2)
         if choice != 'national_archive_index': pdf.multi_cell(col_width, row_height*spacing, f"Date: {datetime.strftime(r['date'], '%B %-d, %Y')}", 0, ln=2)
         pdf.set_font('DejaVu', '', 14)
-        pdf.multi_cell(col_width, row_height*spacing, text, 'B', ln=2)
+        pdf.multi_cell(col_width, row_height*spacing, text.replace("<br>", ''), 'B', ln=2)
         pdf.ln(row_height * spacing)
     n = datetime.now()
     html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str.replace(' ', '_')}_{datetime.strftime(n, '%m_%d_%y')}")
@@ -133,7 +133,7 @@ if export_as_pdf_full:
     with ix.searcher() as searcher:
         results = searcher.search(query, groupedby=cats, limit=None)
         for r in results:
-            text = r['text'].replace("€", '$pound_sign$').replace("—", "-")
+            text = r['text'].replace("<br>", '')
             pdf.set_font('DejaVu', 'B', 12)
             pdf.multi_cell(col_width, row_height*spacing, f"Title: {r['title']}", 0, ln=2)
             if choice != 'national_archive_index': pdf.multi_cell(col_width, row_height*spacing, f"Date: {datetime.strftime(r['date'], '%B %-d, %Y')}", 0, ln=2)
