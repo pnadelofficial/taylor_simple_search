@@ -94,7 +94,7 @@ export_as_pdf_page = st.button("Export page as PDF")
 export_as_pdf_full = st.button("Export full search as PDF")
 
 def create_download_link(val, filename):
-    b64 = base64.b64encode(val)  # val looks like b'...'
+    b64 = base64.b64encode(val)
     return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Download file</a>'
 
 if export_as_pdf_page:
@@ -115,8 +115,8 @@ if export_as_pdf_page:
         pdf.set_font('DejaVu', '', 14)
         pdf.multi_cell(col_width, row_height*spacing, text, 'B', ln=2)
         pdf.ln(row_height * spacing)
-
-    html = create_download_link(pdf.output(dest="S"), "test")
+    n = datetime.now()
+    html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str.replace(' ', '_')}_{datetime.strftime(n, '%m_%d_%y')}")
     st.markdown(html, unsafe_allow_html=True)
 
 if export_as_pdf_full:
@@ -140,6 +140,6 @@ if export_as_pdf_full:
             pdf.set_font('DejaVu', '', 14)
             pdf.multi_cell(col_width, row_height*spacing, text, 'B', ln=2)
             pdf.ln(row_height * spacing)
-
-    html = create_download_link(pdf.output(dest="S"), "test")
+    n = datetime.now()
+    html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str.replace(' ', '_')}_{datetime.strftime(n, '%m_%d_%y')}")
     st.markdown(html, unsafe_allow_html=True)
