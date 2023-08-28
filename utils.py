@@ -63,7 +63,9 @@ def inject_highlights(text, searches):
 
 def add_context(data, r, amount=1):
     sents = []
-    res_idx = int(data.loc[(data.passage==r['text'])].index[0])
+    print(r['text'].strip())
+    res_idx = int(data.loc[data.passage.str.contains(r['text'].strip(), regex=False, na=False)].index[0])
+    print(res_idx-amount)
     sents += list(data.iloc[res_idx-amount:res_idx].passage)
     sents += list(data.iloc[res_idx:res_idx+(amount+1)].passage)
     return '\n'.join(sents)
