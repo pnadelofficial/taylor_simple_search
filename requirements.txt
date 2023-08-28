@@ -2,5 +2,5 @@ fpdf==1.7.2
 fpdf2==2.7.5
 gdown==4.7.1
 pandas==2.0.3
-streamlit==1.25.0
+streamlit==1.26.0
 Whoosh==2.7.4
