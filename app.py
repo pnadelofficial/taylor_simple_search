@@ -118,7 +118,8 @@ if export_as_pdf_page:
         pdf.multi_cell(col_width, row_height*spacing, text.replace("<br>", ''), 'B', ln=2)
         pdf.ln(row_height * spacing)
     n = datetime.now()
-    html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str.replace(' ', '_')}_{datetime.strftime(n, '%m_%d_%y')}")
+    query_str_for_file = query_str.replace(' ', '_').replace('"','').replace("'",'')
+    html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str_for_file}_{datetime.strftime(n, '%m_%d_%y')}")
     st.markdown(html, unsafe_allow_html=True)
 
 if export_as_pdf_full:
@@ -143,5 +144,6 @@ if export_as_pdf_full:
             pdf.multi_cell(col_width, row_height*spacing, text, 'B', ln=2)
             pdf.ln(row_height * spacing)
     n = datetime.now()
-    html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str.replace(' ', '_')}_{datetime.strftime(n, '%m_%d_%y')}")
+    query_str_for_file = query_str.replace(' ', '_').replace('"','').replace("'",'')
+    html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str_for_file}_{datetime.strftime(n, '%m_%d_%y')}")
     st.markdown(html, unsafe_allow_html=True)
