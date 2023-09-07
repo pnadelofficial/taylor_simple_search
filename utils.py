@@ -29,7 +29,7 @@ def get_indices():
     nat_archive_data = 'https://drive.google.com/file/d/1q8tMHtW21iIqrZg2HJ3ndBqjrLRXYAz-/view?usp=sharing'
     gdown.download(nat_archive_data, output='nat_archive_files.csv', fuzzy=True)
     # ws
-    written_statement_data = 'https://drive.google.com/file/d/13Xb80DGMUaRXPeh5b61CVcGTzFSEoeQl/view?usp=sharing'
+    written_statement_data = 'https://drive.google.com/file/d/1tDrAgQpI13JC6pwJw_geJZDBux0qwyhi/view?usp=sharing'
     gdown.download(written_statement_data, output='all_written_statements.csv', fuzzy=True)
     # transcripts
     transcript_data = 'https://drive.google.com/file/d/1Wq3ahDgFomocUWgsUD7masWaX55BaCvD/view?usp=sharing'
