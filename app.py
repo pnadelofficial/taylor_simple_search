@@ -2,12 +2,14 @@ import streamlit as st
 import pandas as pd
 from whoosh.index import open_dir
 import os
-from whoosh.qparser import QueryParser
+from whoosh.qparser import QueryParser, query
 from whoosh import sorting
 import utils
 from fpdf import FPDF
 import base64
 from datetime import datetime
+from whoosh.lang.morph_en import variations
+import re
 
 st.title('Simple Search')
 
@@ -36,14 +38,19 @@ with st.expander('Click for further information on how to construct a query.'):
     * If you'd like to search in a specific date range, you can specify it with the date: field. For example, date:[20210101 TO 20220101] HIV would return results between January 1st, 2021 and January 1st, 2022 that have HIV in them.
     """)
 
-dirs = [d for d in os.listdir('./indices') if d != 'transcript_answers_index']
+dirs = [d for d in os.listdir('./indices') if (d != 'transcript_answers_index') and (d != 'national_archive_bydoc')]
 choice = st.selectbox('What documents would you like to search in?', dirs, format_func=lambda x: x.replace('_index', '').replace('_', ' ').title()+' documents')
 ix = open_dir(f'./indices/{choice}')
 
 if choice == 'national_archive_index':
+    ix = open_dir(f'./indices/national_archive_index_104')
     cats = sorting.FieldFacet("category")
     cat_choice = st.selectbox('What category of the National Archive data would you like to search in?', ['HIV', 'Haemophilia', 'Hep_C', 'Litigation and Compensation'], format_func=lambda x: x.replace('_', ' '))
-    data = pd.read_csv('./data/nat_archive_files.csv').rename(columns={'Unnamed: 0':'doc_index', 'sentences':'passage'})
+    data = pd.read_csv('./data/national_archives_104.csv').rename(columns={'Unnamed: 0':'doc_index', 'sentences':'passage'})
+    on = st.toggle("Search by PDF page")
+    if on: 
+        data = pd.read_csv('./data/nat_archive_files.csv').rename(columns={'Unnamed: 0':'doc_index', 'sentences':'passage'})
+        ix = open_dir(f'./indices/{choice}')
 elif choice == 'written_statement_index':
     cats = None
     cat_choice = None
@@ -69,28 +76,39 @@ with st.sidebar:
 
 text_for_save = []
 if query_str != '':
-    parser = QueryParser("text", ix.schema)
-    query = parser.parse(query_str)
-    searches = [q.lower() for q in query_str.split(' ') if (q != 'AND') and (q != 'OR') and (q != 'NOT') and (q != 'TO')]
+    parser = QueryParser("text", ix.schema, termclass=query.Variations)
+    q = parser.parse(query_str)
+    split_query = re.split("~|\s", query_str)
+    all_tokens = list(set(query_str.split(' ') + [item for sublist in [variations(t) for t in query_str.split(' ')] for item in sublist]))
+    searches = [q.lower() for q in all_tokens if (q != 'AND') and (q != 'OR') and (q != 'NOT') and (q != 'TO')]
 
     with ix.searcher() as searcher:
-        results = searcher.search(query, groupedby=cats, limit=None)
+        results = searcher.search(q, groupedby=cats, limit=None)
         if choice == 'national_archive_index':
             groups = results.groups()
+            if (cat_choice == 'Hep_C') and (not on): 
+                cat_choice = 'Hep C'
             if cat_choice in groups:
                 hits = list(set(groups[cat_choice]))
+                st.write(f"There are **{len(hits)}** results for this query.") 
                 for i, res in enumerate(hits[st.session_state.start:st.session_state.start+st.session_state.to_see]):
                     r = searcher.stored_fields(res)
-                    full = utils.display_results(i, r, data, searches, display_date=False)
+                    if on:
+                        full = utils.display_results(i, r, data, searches, display_date=False)
+                    else:
+                        full = utils.display_results(i, r, data, searches, display_date=True)
                     text_for_save.append(full)
-                st.write(f'Page: {st.session_state.page_count} of {(len(hits)//to_see)+1}')
+                num_pages = (len(hits)//to_see)+1 if len(hits) > to_see else len(hits)//to_see
+                st.write(f'Page: {st.session_state.page_count} of {num_pages}')
             else:
                 st.write(f"No results for this query in the {cat_choice} documents.")  
         else:
+            st.write(f"There are **{len(results)}** results for this query.") 
             for i, r in enumerate(results[st.session_state.start:st.session_state.start+st.session_state.to_see]):
                 full = utils.display_results(i, r, data, searches)
                 text_for_save.append(full)
-            st.write(f'Page: {st.session_state.page_count} of {(len(results)//to_see)+1}')
+            num_pages = (len(results)//to_see)+1 #if len(results) > to_see else len(results)//to_see
+            st.write(f'Page: {st.session_state.page_count} of {num_pages}')
 
 export_as_pdf_page = st.button("Export page as PDF")
 export_as_pdf_full = st.button("Export full search as PDF")
