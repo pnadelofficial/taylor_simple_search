@@ -152,7 +152,7 @@ if export_as_pdf_full:
     pdf.multi_cell(0, row_height*3, f"Search Query: {query_str}", 1)
     pdf.ln(row_height*3)
     with ix.searcher() as searcher:
-        results = searcher.search(query, groupedby=cats, limit=None)
+        results = searcher.search(q, groupedby=cats, limit=None)
         for r in results:
             text = r['text'].replace("<br>", '')
             pdf.set_font('DejaVu', 'B', 12)
