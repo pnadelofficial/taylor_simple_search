@@ -118,6 +118,7 @@ def create_download_link(val, filename):
     return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Download file</a>'
 
 if export_as_pdf_page:
+    st.info('Generating PDF', icon="ℹ️")
     pdf = FPDF()
     pdf.add_page()
     pdf.add_font('DejaVu', '', './fonts/DejaVuSansCondensed.ttf', uni=True)
@@ -141,6 +142,7 @@ if export_as_pdf_page:
     st.markdown(html, unsafe_allow_html=True)
 
 if export_as_pdf_full:
+    st.info('Generating PDF', icon="ℹ️")
     pdf = FPDF()
     pdf.add_page()
     pdf.add_font('DejaVu', '', './fonts/DejaVuSansCondensed.ttf', uni=True)
