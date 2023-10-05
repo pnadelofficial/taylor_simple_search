@@ -140,7 +140,7 @@ if export_as_pdf_page:
     n = datetime.now()
     query_str_for_file = query_str.replace(' ', '_').replace('"','').replace("'",'')
     html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str_for_file}_{datetime.strftime(n, '%m_%d_%y')}")
-    status.success('PDF Finished!')
+    status.success('PDF Finished! Download with the link below.')
     st.markdown(html, unsafe_allow_html=True)
 
 if export_as_pdf_full:
@@ -169,5 +169,5 @@ if export_as_pdf_full:
     n = datetime.now()
     query_str_for_file = query_str.replace(' ', '_').replace('"','').replace("'",'')
     html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str_for_file}_{datetime.strftime(n, '%m_%d_%y')}")
-    status.success('PDF Finished!')
+    status.success('PDF Finished! Download with the link below.')
     st.markdown(html, unsafe_allow_html=True)
