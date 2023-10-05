@@ -118,7 +118,8 @@ def create_download_link(val, filename):
     return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Download file</a>'
 
 if export_as_pdf_page:
-    st.info('Generating PDF', icon="ℹ️")
+    status = st.empty()
+    status.info('Generating PDF, please wait...')
     pdf = FPDF()
     pdf.add_page()
     pdf.add_font('DejaVu', '', './fonts/DejaVuSansCondensed.ttf', uni=True)
@@ -139,10 +140,12 @@ if export_as_pdf_page:
     n = datetime.now()
     query_str_for_file = query_str.replace(' ', '_').replace('"','').replace("'",'')
     html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str_for_file}_{datetime.strftime(n, '%m_%d_%y')}")
+    status.success('PDF Finished!')
     st.markdown(html, unsafe_allow_html=True)
 
 if export_as_pdf_full:
-    st.info('Generating PDF', icon="ℹ️")
+    status = st.empty()
+    status.info('Generating PDF, please wait...')
     pdf = FPDF()
     pdf.add_page()
     pdf.add_font('DejaVu', '', './fonts/DejaVuSansCondensed.ttf', uni=True)
@@ -166,4 +169,5 @@ if export_as_pdf_full:
     n = datetime.now()
     query_str_for_file = query_str.replace(' ', '_').replace('"','').replace("'",'')
     html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str_for_file}_{datetime.strftime(n, '%m_%d_%y')}")
+    status.success('PDF Finished!')
     st.markdown(html, unsafe_allow_html=True)
