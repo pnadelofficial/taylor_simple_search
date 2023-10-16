@@ -133,7 +133,7 @@ if export_as_pdf_page:
     for text, r in text_for_save:
         pdf.set_font('DejaVu', 'B', 12)
         pdf.multi_cell(col_width, row_height*spacing, f"Title: {r['title']}", 0, ln=2)
-        if choice != 'national_archive_index': pdf.multi_cell(col_width, row_height*spacing, f"Date: {datetime.strftime(r['date'], '%B %-d, %Y')}", 0, ln=2)
+        if (choice != 'national_archive_index') and ('date' in r.keys()): pdf.multi_cell(col_width, row_height*spacing, f"Date: {datetime.strftime(r['date'], '%B %-d, %Y')}", 0, ln=2)
         pdf.set_font('DejaVu', '', 14)
         pdf.multi_cell(col_width, row_height*spacing, text.replace("<br>", ''), 'B', ln=2)
         pdf.ln(row_height * spacing)
@@ -162,7 +162,7 @@ if export_as_pdf_full:
             text = r['text'].replace("<br>", '')
             pdf.set_font('DejaVu', 'B', 12)
             pdf.multi_cell(col_width, row_height*spacing, f"Title: {r['title']}", 0, ln=2)
-            if choice != 'national_archive_index': pdf.multi_cell(col_width, row_height*spacing, f"Date: {datetime.strftime(r['date'], '%B %-d, %Y')}", 0, ln=2)
+            if (choice != 'national_archive_index') and ('date' in r.keys()): pdf.multi_cell(col_width, row_height*spacing, f"Date: {datetime.strftime(r['date'], '%B %-d, %Y')}", 0, ln=2)
             pdf.set_font('DejaVu', '', 14)
             pdf.multi_cell(col_width, row_height*spacing, text, 'B', ln=2)
             pdf.ln(row_height * spacing)
