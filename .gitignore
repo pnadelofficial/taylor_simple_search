@@ -169,6 +169,7 @@ written_statement_index
 transcript_answers_index
 national_archive_index_bydoc
 national_archive_index_104
+policy_docs_index
 
 # notebooks
 *.ipynb

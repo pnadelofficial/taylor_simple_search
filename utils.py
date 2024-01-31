@@ -25,7 +25,7 @@ def get_indices():
     transcripts_answers_url = 'https://drive.google.com/drive/folders/1hOfshfxwtNct4l2drUw3RZKYLLOFQgUY?usp=sharing'
     gdown.download_folder(transcripts_answers_url, quiet=True, use_cookies=False)
     # policy docs
-    policy_docs_url = 'https://drive.google.com/drive/folders/1VeiIQQDHJcCemJm9-bO7v5zRklprVevC?usp=sharing'
+    policy_docs_url = 'https://drive.google.com/drive/folders/17KGHBNzIyCNCV_QXWDmdJpJy0Z6cIfD7?usp=sharing'
     gdown.download_folder(policy_docs_url, quiet=True, use_cookies=False)
     os.chdir('..')
 
@@ -44,7 +44,7 @@ def get_indices():
     transcript_data = 'https://drive.google.com/file/d/1Wq3ahDgFomocUWgsUD7masWaX55BaCvD/view?usp=sharing'
     gdown.download(transcript_data, output='all_transcripts.csv', fuzzy=True)
     # policy docs
-    policy_data = 'https://drive.google.com/file/d/1XHubvtqOxxPMkMt1nuvp7WGywYr9GLna/view?usp=sharing'
+    policy_data = 'https://drive.google.com/file/d/1NPZ9C6Io3L8GsqeT-85aCv3m0AFigIPS/view?usp=sharing'
     gdown.download(policy_data, output='policy_docs.csv', fuzzy=True)
     os.chdir('..')
 
