@@ -39,7 +39,7 @@ with st.expander('Click for further information on how to construct a query.'):
     """)
 
 dirs = [d for d in os.listdir('./indices') if (d != 'transcript_answers_index') and (d != 'national_archive_bydoc') and (d != 'national_archive_index_104')]
-choice = st.selectbox('What documents would you like to search in?', dirs, format_func=lambda x: x.replace('_index', '').replace('_', ' ').title()+' documents')
+choice = st.selectbox('What documents would you like to search in?', dirs, format_func=lambda x: x.replace('_index', '').replace('_', ' ').replace('docs', '').title()+' documents')
 ix = open_dir(f'./indices/{choice}')
 
 if choice == 'national_archive_index':
@@ -61,6 +61,10 @@ elif choice == 'transcript_index':
     data = pd.read_csv('./data/all_transcripts.csv').rename(columns={'index':'doc_index', 'q_a':'passage'})
     on = st.toggle("Search on just the answers")
     if on: ix = open_dir('./indices/transcript_answers_index')
+elif choice == 'policy_docs_index':
+    cats = None
+    cat_choice = None
+    data = pd.read_csv('./data/policy_docs.csv').rename(columns={'sentences':'passage'})
 
 to_see = st.number_input('How many results would you like to see per page?', value=10)
 
