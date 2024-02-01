@@ -115,7 +115,9 @@ def check_metadata(r, data, display_date):
         st.markdown(f"<small><b>Date: {datetime.strftime(r['date'], '%B %-d, %Y')}</b></small>", unsafe_allow_html=True)
     elif display_date and ('date' in keys) and (not re.match('\d', str(r['date']))):
         st.markdown(f"<small><b>Date: No date found</b></small>", unsafe_allow_html=True)
-    elif display_date and ('date' not in keys) and (re.match('\d', r['date_possible'])):
+    elif display_date and ('date_possible' in keys) and (re.match('\d', r['date_possible'])):
         st.markdown(f"<small><b>Date: {r['date_possible']}</b></small>", unsafe_allow_html=True)
-    elif display_date and ('date' not in keys) and (not re.match('\d', r['date_possible'])):
+    elif display_date and ('date_possible' in keys) and (not re.match('\d', r['date_possible'])):
         st.markdown(f"<small><b>Possible Date: No date found</b></small>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<small><b>Date: No date found</b></small>", unsafe_allow_html=True)
