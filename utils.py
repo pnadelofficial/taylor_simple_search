@@ -111,9 +111,9 @@ def check_metadata(r, data, display_date):
     st.markdown(f"<small><b>Filename: {r['filename']}</b></small>", unsafe_allow_html=True)
     
     # date
-    if display_date and ('date' in keys) and (re.match('\d', r['date'])): 
+    if display_date and ('date' in keys) and (re.match('\d', str(r['date']))): 
         st.markdown(f"<small><b>Date: {datetime.strftime(r['date'], '%B %-d, %Y')}</b></small>", unsafe_allow_html=True)
-    elif display_date and ('date' in keys) and (not re.match('\d', r['date'])):
+    elif display_date and ('date' in keys) and (not re.match('\d', str(r['date']))):
         st.markdown(f"<small><b>Date: No date found</b></small>", unsafe_allow_html=True)
     elif display_date and ('date' not in keys) and (re.match('\d', r['date_possible'])):
         st.markdown(f"<small><b>Date: {r['date_possible']}</b></small>", unsafe_allow_html=True)
