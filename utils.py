@@ -4,6 +4,8 @@ import gdown
 from string import punctuation
 import re
 from datetime import datetime
+import base64
+from fpdf import FPDF
 
 @st.cache_data
 def get_indices():
@@ -27,6 +29,9 @@ def get_indices():
     # policy docs
     policy_docs_url = 'https://drive.google.com/drive/folders/1_rNgLuOemfMEJblzw_bNyN0rLJGbvDjS?usp=sharing'
     gdown.download_folder(policy_docs_url, quiet=True, use_cookies=False)
+    # sec sources
+    sec_sources_url = 'https://drive.google.com/drive/folders/1aaoQFXC4xjKoVxrzf8JpOBr_2PGFX30M?usp=sharing'
+    gdown.download_folder(sec_sources_url, quiet=True, use_cookies=False)
     os.chdir('..')
 
     os.makedirs('data', exist_ok=True)
@@ -46,6 +51,9 @@ def get_indices():
     # policy docs
     policy_data = 'https://drive.google.com/file/d/18WBgixNshITOUxCTPWNNjjGQy_jaPFS4/view?usp=sharing'
     gdown.download(policy_data, output='policy_docs.csv', fuzzy=True)
+    # sec sources
+    sec_sources_data = 'https://drive.google.com/file/d/1Ou5Yl-q03awfwj1qD8vT8-NgV9WMnD4R/view?usp=sharing'
+    gdown.download(sec_sources_data, output='sec_sources.csv', fuzzy=True)
     os.chdir('..')
 
 def escape_markdown(text):
@@ -75,9 +83,7 @@ def inject_highlights(text, searches):
 
 def add_context(data, r, amount=1):
     sents = []
-    print(r['text'].strip())
     res_idx = int(data.loc[data.passage.str.contains(r['text'].strip(), regex=False, na=False)].index[0])
-    print(res_idx-amount)
     sents += list(data.iloc[res_idx-amount:res_idx].passage)
     sents += list(data.iloc[res_idx:res_idx+(amount+1)].passage)
     return '\n'.join(sents)
@@ -121,3 +127,64 @@ def check_metadata(r, data, display_date):
         st.markdown(f"<small><b>Possible Date: No date found</b></small>", unsafe_allow_html=True)
     else:
         st.markdown(f"<small><b>Date: No date found</b></small>", unsafe_allow_html=True)
+
+def create_download_link(val, filename):
+    b64 = base64.b64encode(val)
+    return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Download file</a>'
+
+def export_as_pdf_page(text_for_save, query_str, choice):
+    pdf = FPDF()
+    status = st.empty()
+    status.info('Generating PDF, please wait...')
+    pdf.add_page()
+    pdf.add_font('DejaVu', '', './fonts/DejaVuSansCondensed.ttf', uni=True)
+    pdf.add_font('DejaVu', 'B', './fonts/DejaVuSansCondensed-Bold.ttf', uni=True)
+    pdf.set_font('DejaVu', 'B', 12)
+    col_width = pdf.w / 1.11
+    spacing = 1.5
+    row_height = pdf.font_size
+    pdf.multi_cell(0, row_height*3, f"Search Query: {query_str}", 1)
+    pdf.ln(row_height*3)
+    for text, r in text_for_save:
+        pdf.set_font('DejaVu', 'B', 12)
+        title = r['title'] if 'title' in r.keys() else r['filename']
+        pdf.multi_cell(col_width, row_height*spacing, f"Title: {title}", 0, ln=2)
+        if (choice != 'national_archive_index') and ('date' in r.keys()): pdf.multi_cell(col_width, row_height*spacing, f"Date: {datetime.strftime(r['date'], '%B %-d, %Y')}", 0, ln=2)
+        pdf.set_font('DejaVu', '', 14)
+        pdf.multi_cell(col_width, row_height*spacing, text.replace("<br>", ''), 'B', ln=2)
+        pdf.ln(row_height * spacing)
+    n = datetime.now()
+    query_str_for_file = query_str.replace(' ', '_').replace('"','').replace("'",'')
+    html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str_for_file}_{datetime.strftime(n, '%m_%d_%y')}")
+    status.success('PDF Finished! Download with the link below.')
+    st.markdown(html, unsafe_allow_html=True)
+
+def export_as_pdf_full(results, query_str, choice, ix, cats, q):
+    pdf = FPDF()
+    status = st.empty()
+    status.info('Generating PDF, please wait...')
+    pdf.add_page()
+    pdf.add_font('DejaVu', '', './fonts/DejaVuSansCondensed.ttf', uni=True)
+    pdf.add_font('DejaVu', 'B', './fonts/DejaVuSansCondensed-Bold.ttf', uni=True)
+    pdf.set_font('DejaVu', 'B', 12)
+    col_width = pdf.w / 1.11
+    spacing = 1.5
+    row_height = pdf.font_size
+    pdf.multi_cell(0, row_height*3, f"Search Query: {query_str}", 1)
+    pdf.ln(row_height*3)
+    with ix.searcher() as searcher:
+        results = searcher.search(q, groupedby=cats, limit=None)
+        for r in results:
+            text = r['text'].replace("<br>", '')
+            pdf.set_font('DejaVu', 'B', 12)
+            title = r['title'] if 'title' in r.keys() else r['filename']
+            pdf.multi_cell(col_width, row_height*spacing, f"Title: {title}", 0, ln=2)
+            if (choice != 'national_archive_index') and ('date' in r.keys()): pdf.multi_cell(col_width, row_height*spacing, f"Date: {datetime.strftime(r['date'], '%B %-d, %Y')}", 0, ln=2)
+            pdf.set_font('DejaVu', '', 14)
+            pdf.multi_cell(col_width, row_height*spacing, text, 'B', ln=2)
+            pdf.ln(row_height * spacing)
+    n = datetime.now()
+    query_str_for_file = query_str.replace(' ', '_').replace('"','').replace("'",'')
+    html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str_for_file}_{datetime.strftime(n, '%m_%d_%y')}")
+    status.success('PDF Finished! Download with the link below.')
+    st.markdown(html, unsafe_allow_html=True)
