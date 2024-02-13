@@ -48,31 +48,34 @@ if choice == 'national_archive_index':
     if on: 
         data = pd.read_csv('./data/nat_archive_files.csv').rename(columns={'Unnamed: 0':'doc_index', 'sentences':'passage'})
         ix = open_dir(f'./indices/{choice}')
-    doc_search = 'Search all documents'
+    doc_search = ['Search all documents']
 elif choice == 'written_statement_index':
     cats = None
     cat_choice = None
     data = pd.read_csv('./data/all_written_statements.csv').rename(columns={'index':'doc_index', 'answers':'passage'})
-    doc_search = 'Search all documents'
+    doc_search = ['Search all documents']
 elif choice == 'transcript_index':
     cats = None
     cat_choice = None
     data = pd.read_csv('./data/all_transcripts.csv').rename(columns={'index':'doc_index', 'q_a':'passage'})
     on = st.toggle("Search on just the answers")
     if on: ix = open_dir('./indices/transcript_answers_index')
-    doc_search = 'Search all documents'
+    doc_search = ['Search all documents']
 elif choice == 'policy_docs_index':
     cats = None
     cat_choice = None
     data = pd.read_csv('./data/policy_docs.csv').rename(columns={'sentences':'passage'})
-    doc_search = st.selectbox('Search by document', ['Search all documents'] + list(data.filename.unique()))
+    # doc_search = st.selectbox('Search by document', ['Search all documents'] + list(data.filename.unique()))
+    doc_search = st.multiselect('Search by document', ['Search all documents'] + list(data.filename.unique()))
 elif choice == 'secondary_sources_index':
     cats = None
     cat_choice = None
     data = pd.read_csv('./data/sec_sources.csv', lineterminator='\n').rename(columns={'chunks':'passage'})
-    doc_search = st.selectbox('Search by document', ['Search all documents'] + list(data.files.unique()))
+    # doc_search = st.selectbox('Search by document', ['Search all documents'] + list(data.files.unique()))
+    doc_search = st.multiselect('Search by document', ['Search all documents'] + list(data.files.unique()))
 
 to_see = st.number_input('How many results would you like to see per page?', value=10)
+stemmer = st.toggle('Use stemming')
 
 with st.sidebar:
     # css-13ejsyy ef3psqc11
@@ -89,7 +92,10 @@ if "text_for_page_export" not in st.session_state:
     st.session_state["text_for_page_export"] = {}
 
 if query_str != '':
-    parser = QueryParser("text", ix.schema, termclass=query.Variations)
+    if stemmer: 
+        parser = QueryParser("text", ix.schema, termclass=query.Variations)
+    else:
+        parser = QueryParser("text", ix.schema)
     q = parser.parse(query_str)
     split_query = re.split("~|\s", query_str)
     all_tokens = list(set(query_str.split(' ') + [item for sublist in [variations(t) for t in query_str.split(' ')] for item in sublist]))
@@ -117,7 +123,7 @@ if query_str != '':
             else:
                 st.write(f"No results for this query in the {cat_choice} documents.")  
         else:
-            if ((choice == 'policy_docs_index') or (choice == 'secondary_sources_index')) and (doc_search != 'Search all documents'):
+            if ((choice == 'policy_docs_index') or (choice == 'secondary_sources_index')) and (doc_search != ['Search all documents']):
                 results = searcher.search(q, groupedby=cats, limit=None, filter=QueryParser('filename', ix.schema).parse(f'filename:{doc_search}'))
             st.write(f"There are **{len(results)}** results for this query.") 
             for i, r in enumerate(results[st.session_state.start:st.session_state.start+st.session_state.to_see]):
@@ -129,8 +135,6 @@ if query_str != '':
 
 export_as_pdf_page = st.button("Export page as PDF")
 export_as_pdf_full = st.button("Export full search as PDF")
-
-print(st.session_state["text_for_page_export"])
 
 if export_as_pdf_page:
     utils.export_as_pdf_page(list(st.session_state["text_for_page_export"].values()), query_str, choice)
