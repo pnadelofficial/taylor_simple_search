@@ -6,6 +6,7 @@ import re
 from datetime import datetime
 import base64
 from fpdf import FPDF
+import pickle
 
 @st.cache_data
 def get_indices():
@@ -97,6 +98,8 @@ def display_results(i, r, data, searches, display_date=True, text_return=True):
     amount = st.number_input('Choose context length', key=f'num_{i}', value=1, step=1, help='This number represents the amount of sentences to be added before and after the result.')
     if st.button('Add context', key=f'con_{i}'):
         full = add_context(data, r, amount)
+        with open(f"./additional_context/additional_context_{r['filename']}.p", 'wb') as p:
+            pickle.dump((full, dict(r)), p)
     if ('QUESTION:' in full) and ('ANSWER:' in full):
         full = re.sub('(?=ANSWER:)', '<br>', full, flags=re.DOTALL)
         full = re.sub('(?=.QUESTION:)', '<br>', full, flags=re.DOTALL)
@@ -146,6 +149,11 @@ def export_as_pdf_page(text_for_save, query_str, choice):
     pdf.multi_cell(0, row_height*3, f"Search Query: {query_str}", 1)
     pdf.ln(row_height*3)
     for text, r in text_for_save:
+        print(r['filename'])
+        if r['filename'] in [f.split('_')[-1].replace('.p','') for f in os.listdir('./additional_context')]:
+            with open(f'./additional_context/additional_context_{r["filename"]}.p', 'rb') as p:
+                full, r = pickle.load(p)
+                text = full
         pdf.set_font('DejaVu', 'B', 12)
         title = r['title'] if 'title' in r.keys() else r['filename']
         pdf.multi_cell(col_width, row_height*spacing, f"Title: {title}", 0, ln=2)

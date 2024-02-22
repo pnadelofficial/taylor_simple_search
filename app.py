@@ -95,7 +95,7 @@ if query_str != '':
     if stemmer: 
         parser = QueryParser("text", ix.schema, termclass=query.Variations)
     else:
-        parser = QueryParser("text", ix.schema)
+        parser = QueryParser("text", ix.schema)    
     q = parser.parse(query_str)
     split_query = re.split("~|\s", query_str)
     all_tokens = list(set(query_str.split(' ') + [item for sublist in [variations(t) for t in query_str.split(' ')] for item in sublist]))
@@ -109,7 +109,7 @@ if query_str != '':
                 cat_choice = 'Hep C'
             if cat_choice in groups:
                 hits = list(set(groups[cat_choice]))
-                st.write(f"There are **{len(hits)}** results for this query.") 
+                st.write(f"There are **{len(hits)}** results for this query over all documents in this dataset.") 
                 for i, res in enumerate(hits[st.session_state.start:st.session_state.start+st.session_state.to_see]):
                     r = searcher.stored_fields(res)
                     if on:
@@ -117,19 +117,21 @@ if query_str != '':
                     else:
                         full = utils.display_results(i, r, data, searches, display_date=True)
                     # text_for_save.append(full)
-                    st.session_state["text_for_page_export"][i] = full
+                    if len(st.session_state["text_for_page_export"][i]) < len(full):
+                        st.session_state["text_for_page_export"][i] = full
                 num_pages = (len(hits)//to_see)+1 if len(hits) > to_see else len(hits)//to_see
                 st.write(f'Page: {st.session_state.page_count} of {num_pages}')
             else:
                 st.write(f"No results for this query in the {cat_choice} documents.")  
         else:
-            if ((choice == 'policy_docs_index') or (choice == 'secondary_sources_index')) and (doc_search != ['Search all documents']):
-                results = searcher.search(q, groupedby=cats, limit=None, filter=QueryParser('filename', ix.schema).parse(f'filename:{doc_search}'))
-            st.write(f"There are **{len(results)}** results for this query.") 
+            st.write(f"There are **{len(results)}** results for this query over all documents in this dataset.") 
             for i, r in enumerate(results[st.session_state.start:st.session_state.start+st.session_state.to_see]):
-                full = utils.display_results(i, r, data, searches)
+                if doc_search[0] != 'Search all documents':
+                    if r['filename'] not in doc_search: continue
+                full_with_r = utils.display_results(i, r, data, searches)
                 # text_for_save.append(full)
-                st.session_state["text_for_page_export"][i] = full
+                if len(st.session_state["text_for_page_export"][i]) < len(full_with_r[0]):
+                    st.session_state["text_for_page_export"][i] = full_with_r
             num_pages = (len(results)//to_see)+1 #if len(results) > to_see else len(results)//to_see
             st.write(f'Page: {st.session_state.page_count} of {num_pages}')
 

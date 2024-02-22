@@ -174,3 +174,7 @@ secondary_sources_index
 
 # notebooks
 *.ipynb
+
+# additional context
+additional_context
+*.p
