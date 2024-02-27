@@ -57,6 +57,8 @@ def get_indices():
     gdown.download(sec_sources_data, output='sec_sources.csv', fuzzy=True)
     os.chdir('..')
 
+    os.makedirs('additional_context', exist_ok=True)   
+
 def escape_markdown(text):
     '''Removes characters which have specific meanings in markdown'''
     MD_SPECIAL_CHARS = "\`*_{}#+"
