@@ -89,7 +89,7 @@ with st.sidebar:
 
 # text_for_save = []
 if "text_for_page_export" not in st.session_state:
-    st.session_state["text_for_page_export"] = {}
+    st.session_state["text_for_page_export"] = {k: '' for k in range(to_see)}
 
 if query_str != '':
     if stemmer: 

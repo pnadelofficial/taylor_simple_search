@@ -196,3 +196,12 @@ def export_as_pdf_full(results, query_str, choice, ix, cats, q):
     html = create_download_link(pdf.output(dest="S"), f"search_results_{query_str_for_file}_{datetime.strftime(n, '%m_%d_%y')}")
     status.success('PDF Finished! Download with the link below.')
     st.markdown(html, unsafe_allow_html=True)
+
+
+
+
+# class Page:
+#     def __init__(self, to_see, start, end) -> None:
+#         self.to_see = to_see
+#         self.start = start
+#         self.end = end
