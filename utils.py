@@ -138,6 +138,7 @@ def create_download_link(val, filename):
     return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Download file</a>'
 
 def export_as_pdf_page(text_for_save, query_str, choice):
+    print(text_for_save)
     pdf = FPDF()
     status = st.empty()
     status.info('Generating PDF, please wait...')

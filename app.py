@@ -87,7 +87,7 @@ with st.sidebar:
         st.session_state.start = st.session_state.start - to_see
         st.session_state.page_count -= 1
 
-# text_for_save = []
+text_for_save = []
 if "text_for_page_export" not in st.session_state:
     st.session_state["text_for_page_export"] = {k: '' for k in range(to_see)}
 
@@ -116,9 +116,9 @@ if query_str != '':
                         full = utils.display_results(i, r, data, searches, display_date=False)
                     else:
                         full = utils.display_results(i, r, data, searches, display_date=True)
-                    # text_for_save.append(full)
-                    if len(st.session_state["text_for_page_export"][i]) < len(full):
-                        st.session_state["text_for_page_export"][i] = full
+                    text_for_save.append(full)
+                    # if len(st.session_state["text_for_page_export"][i]) < len(full):
+                    #     st.session_state["text_for_page_export"][i] = full
                 num_pages = (len(hits)//to_see)+1 if len(hits) > to_see else len(hits)//to_see
                 st.write(f'Page: {st.session_state.page_count} of {num_pages}')
             else:
@@ -129,9 +129,9 @@ if query_str != '':
                 if doc_search[0] != 'Search all documents':
                     if r['filename'] not in doc_search: continue
                 full_with_r = utils.display_results(i, r, data, searches)
-                # text_for_save.append(full)
-                if len(st.session_state["text_for_page_export"][i]) < len(full_with_r[0]):
-                    st.session_state["text_for_page_export"][i] = full_with_r
+                text_for_save.append(full_with_r)
+                # if len(st.session_state["text_for_page_export"][i]) < len(full_with_r[0]):
+                #     st.session_state["text_for_page_export"][i] = full_with_r
             num_pages = (len(results)//to_see)+1 #if len(results) > to_see else len(results)//to_see
             st.write(f'Page: {st.session_state.page_count} of {num_pages}')
 
@@ -139,7 +139,7 @@ export_as_pdf_page = st.button("Export page as PDF")
 export_as_pdf_full = st.button("Export full search as PDF")
 
 if export_as_pdf_page:
-    utils.export_as_pdf_page(list(st.session_state["text_for_page_export"].values()), query_str, choice)
+    utils.export_as_pdf_page(text_for_save, query_str, choice)
 
 if export_as_pdf_full:
     utils.export_as_pdf_full(results, query_str, choice, ix, cats, q)
