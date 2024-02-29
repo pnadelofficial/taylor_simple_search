@@ -178,3 +178,6 @@ secondary_sources_index
 # additional context
 additional_context
 *.p
+
+# feedback
+.streamlit
