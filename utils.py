@@ -72,7 +72,7 @@ def get_indices():
 
 DIRS = [d for d in os.listdir('./indices') if (d != 'transcript_answers_index') and (d != 'national_archive_bydoc') and (d != 'national_archive_index_104') and (d != '.ds_store')]
 DIRS = [d for d in DIRS if ('bydoc' not in d)]
-
+print(DIRS)
 def reset_pages():
     st.session_state['page_count'] = 0
 
