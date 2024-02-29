@@ -15,8 +15,6 @@ from fpdf import FPDF
 import gspread
 
 CREDS = st.secrets['gsp_secrets']['my_project_settings']
-DIRS = [d for d in os.listdir('./indices') if (d != 'transcript_answers_index') and (d != 'national_archive_bydoc') and (d != 'national_archive_index_104')]
-DIRS = [d for d in DIRS if 'bydoc' not in d]
 
 @st.cache_resource
 def load_google_sheet():
@@ -71,6 +69,9 @@ def get_indices():
     sec_sources_data = 'https://drive.google.com/file/d/1Ou5Yl-q03awfwj1qD8vT8-NgV9WMnD4R/view?usp=sharing'
     gdown.download(sec_sources_data, output='sec_sources.csv', fuzzy=True)
     os.chdir('..')
+
+DIRS = [d for d in os.listdir('./indices') if (d != 'transcript_answers_index') and (d != 'national_archive_bydoc') and (d != 'national_archive_index_104')]
+DIRS = [d for d in DIRS if 'bydoc' not in d]
 
 def reset_pages():
     st.session_state['page_count'] = 0
