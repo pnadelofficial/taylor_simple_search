@@ -70,8 +70,8 @@ def get_indices():
     gdown.download(sec_sources_data, output='sec_sources.csv', fuzzy=True)
     os.chdir('..')
 
-DIRS = [d for d in os.listdir('./indices') if (d != 'transcript_answers_index') and (d != 'national_archive_bydoc') and (d != 'national_archive_index_104')]
-DIRS = [d for d in DIRS if ('bydoc' not in d) or ('ds' not in d)]
+DIRS = [d for d in os.listdir('./indices') if (d != 'transcript_answers_index') and (d != 'national_archive_bydoc') and (d != 'national_archive_index_104') and (d != '.ds_store')]
+DIRS = [d for d in DIRS if ('bydoc' not in d)]
 
 def reset_pages():
     st.session_state['page_count'] = 0
