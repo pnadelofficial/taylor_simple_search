@@ -30,25 +30,25 @@ def get_indices():
     os.chdir('indices')
     # nat archive
     nat_archive_url = 'https://drive.google.com/drive/folders/1Ew0mU1l7Y3M1CgD0RBZbfbp-tCwBFVga?usp=sharing'
-    gdown.download_folder(nat_archive_url, quiet=True, use_cookies=False)
+    gdown.download_folder(nat_archive_url, use_cookies=False)
     # nat archive (by doc)
     nat_archive_by_doc_url = 'https://drive.google.com/drive/folders/1kKu7SHmTQC0W4ln0FUkjoJAEp7W-kegJ?usp=sharing'
-    gdown.download_folder(nat_archive_by_doc_url, quiet=True, use_cookies=False)
+    gdown.download_folder(nat_archive_by_doc_url, use_cookies=False)
     # ws
     statements_url = 'https://drive.google.com/drive/folders/1Gsi1UUGxDrIn5j-kzFaE7yI41jPzwnVS?usp=sharing'
-    gdown.download_folder(statements_url, quiet=True, use_cookies=False)
+    gdown.download_folder(statements_url, use_cookies=False)
     # transcripts
     transcripts_url = 'https://drive.google.com/drive/folders/1YR9KRs_ImSSQ4kT1QQR-zOAfmXyANrMl?usp=sharing'
-    gdown.download_folder(transcripts_url, quiet=True, use_cookies=False)
+    gdown.download_folder(transcripts_url,use_cookies=False)
     # transcripts (just answers)
     transcripts_answers_url = 'https://drive.google.com/drive/folders/1hOfshfxwtNct4l2drUw3RZKYLLOFQgUY?usp=sharing'
-    gdown.download_folder(transcripts_answers_url, quiet=True, use_cookies=False)
+    gdown.download_folder(transcripts_answers_url, use_cookies=False)
     # policy docs
     policy_docs_url = 'https://drive.google.com/drive/folders/1_rNgLuOemfMEJblzw_bNyN0rLJGbvDjS?usp=sharing'
-    gdown.download_folder(policy_docs_url, quiet=True, use_cookies=False)
+    gdown.download_folder(policy_docs_url, use_cookies=False)
     # sec sources
     sec_sources_url = 'https://drive.google.com/drive/folders/1aaoQFXC4xjKoVxrzf8JpOBr_2PGFX30M?usp=sharing'
-    gdown.download_folder(sec_sources_url, quiet=True, use_cookies=False)
+    gdown.download_folder(sec_sources_url, use_cookies=False)
     os.chdir('..')
 
     os.makedirs('data', exist_ok=True)
