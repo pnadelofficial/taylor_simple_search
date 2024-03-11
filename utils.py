@@ -66,7 +66,7 @@ def get_indices():
     policy_data = 'https://drive.google.com/file/d/18WBgixNshITOUxCTPWNNjjGQy_jaPFS4/view?usp=sharing'
     gdown.download(policy_data, output='policy_docs.csv', fuzzy=True)
     # sec sources
-    sec_sources_data = 'https://drive.google.com/file/d/1Ou5Yl-q03awfwj1qD8vT8-NgV9WMnD4R/view?usp=sharing'
+    sec_sources_data = 'https://drive.google.com/file/d/1OYspzMKaSBxO3gU3-fgBy08IpD-NPUC6/view?usp=sharing'
     gdown.download(sec_sources_data, output='sec_sources.csv', fuzzy=True)
     os.chdir('..')
 
