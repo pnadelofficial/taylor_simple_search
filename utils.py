@@ -13,6 +13,7 @@ from datetime import datetime
 import base64
 from fpdf import FPDF
 import gspread
+import subprocess
 
 CREDS = st.secrets['gsp_secrets']['my_project_settings']
 
@@ -23,6 +24,8 @@ def load_google_sheet():
 
 @st.cache_data
 def get_indices():
+    subprocess.run(['mv', 'cookies.txt', '~/.cache/gdown/cookies.txt'])
+
     os.makedirs('indices', exist_ok=True)
     os.chdir('indices')
     # nat archive
