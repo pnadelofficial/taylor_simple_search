@@ -24,7 +24,7 @@ def load_google_sheet():
 
 @st.cache_data
 def get_indices():
-    subprocess.run(['mv', 'cookies.txt', '~/.cache/gdown/cookies.txt'])
+    # subprocess.run(['mv', 'cookies.txt', '~/.cache/gdown/cookies.txt'])
 
     os.makedirs('indices', exist_ok=True)
     os.chdir('indices')
@@ -73,7 +73,7 @@ def get_indices():
     gdown.download(sec_sources_data, output='sec_sources.csv', fuzzy=True)
     os.chdir('..')
 
-DIRS = [d for d in os.listdir('./indices') if (d != 'transcript_answers_index') and (d != 'national_archive_bydoc') and (d != 'national_archive_index_104') and (d != '.ds_store')]
+DIRS = [d for d in os.listdir('./indices') if (d != 'transcript_answers_index') and (d != 'national_archive_bydoc') and (d != 'national_archive_index_104') and (d != '.DS_Store')]
 DIRS = [d for d in DIRS if ('bydoc' not in d)]
 print(DIRS)
 def reset_pages():
