@@ -51,6 +51,7 @@ def get_indices():
     gdown.download_folder(sec_sources_url, use_cookies=False)
     # inquiry report
     inquiry_report_url = "https://drive.google.com/drive/folders/1RRQwRh2O35IVItboJDw3q1ahIyVX1jL0?usp=sharing"
+    print("INQURY HERE!!")
     gdown.download_folder(inquiry_report_url, use_cookies=False)
     os.chdir('..')
 
