@@ -49,6 +49,9 @@ def get_indices():
     # sec sources
     sec_sources_url = 'https://drive.google.com/drive/folders/1aaoQFXC4xjKoVxrzf8JpOBr_2PGFX30M?usp=sharing'
     gdown.download_folder(sec_sources_url, use_cookies=False)
+    # inquiry report
+    inquiry_report_url = "https://drive.google.com/drive/folders/1RRQwRh2O35IVItboJDw3q1ahIyVX1jL0?usp=sharing"
+    gdown.download_folder(inquiry_report_url, use_cookies=False)
     os.chdir('..')
 
     os.makedirs('data', exist_ok=True)
@@ -71,6 +74,9 @@ def get_indices():
     # sec sources
     sec_sources_data = 'https://drive.google.com/file/d/1OYspzMKaSBxO3gU3-fgBy08IpD-NPUC6/view?usp=sharing'
     gdown.download(sec_sources_data, output='sec_sources.csv', fuzzy=True)
+    # inquiry report
+    inquiry_report_data = 'https://drive.google.com/file/d/1jqUK8TykLbZ_zyTgNIsjzGaSXYPVG0Hs/view?usp=sharing'
+    gdown.download(inquiry_report_data, output='inquiry_report.csv', fuzzy=True)
     os.chdir('..')
 
 DIRS = [d for d in os.listdir('./indices') if (d != 'transcript_answers_index') and (d != 'national_archive_bydoc') and (d != 'national_archive_index_104') and (d != '.DS_Store')]
@@ -138,6 +144,14 @@ class DataLoader:
         self.doc_search = st.multiselect('Search by document', ['Search all documents'] + self.all_docs, default=['Search all documents'], on_change=reset_pages)
         return data, open_dir(self.choice_path), cat_choice, cats
     
+    def inquiry_report(self):
+        cats = None
+        cat_choice = None
+        data = pd.read_csv('./data/inquiry_report.csv').rename(columns={'Unnamed: 0':'doc_index', 'filename':'files', 'sent':'passage'})
+        self.all_docs = list(data.files.unique())
+        self.doc_search = st.multiselect('Search by document', ['Search all documents'] + self.all_docs, default=['Search all documents'], on_change=reset_pages)
+        return data, open_dir(self.choice_path), cat_choice, cats
+    
     def generic(self, data_path):
         cats = None
         cat_choice = None
@@ -157,6 +171,8 @@ class DataLoader:
             return self.policy_docs()
         elif self.choice == 'secondary_sources_index':
             return self.secondary_sources()
+        elif self.choice == 'inquiry_report_index':
+            return self.inquiry_report()
         else:
             return self.generic(self.choice)
 

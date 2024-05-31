@@ -171,6 +171,7 @@ national_archive_index_bydoc
 national_archive_index_104
 policy_docs_index
 secondary_sources_index
+inquiry_report_index
 
 # notebooks
 *.ipynb
